@@ -244,6 +244,9 @@
     grid-template-columns:1fr 1fr;
     gap:10px;
   }
+  .visual-panel .vp-images.single{
+    grid-template-columns:1fr;
+  }
   .visual-panel .vp-images .vp-col{min-width:0;}
   .visual-panel .vp-images .vp-col-label{
     font-size:9.5px;
@@ -655,7 +658,11 @@
     2:  { file: "2026 Tour de France Stage 2.jpg",                  caption: "タラゴナから海沿いを北上し、Montjuïc城への坂を3回登ってフィニッシュ。" },
     3:  { file: "2026 Stage 3 TDF.jpg",                              caption: "グラノリェールスをスタートし北上、ピレネーを越えてフランス入り。Les Anglesスキーリゾートでフィニッシュ。", overview: "map-stage-3.jpg" },
     4:  { file: "2026 TDF stage 4.jpg",                              caption: "中世都市カルカソンヌからフォワへ。丘陵基調でブレイク成立が見込まれる一日。", overview: "map-stage-4.jpg" },
-    9:  { file: "Stage 9 2026 TDF.jpg",                              caption: "マルモールからユッセルへ。4つの独立山岳ポイントを含む長距離の丘陵ステージ。" },
+    5:  { caption: "ラヌメザンからポーへ。1979年以来もっとも遅い初スプリントチャンス。", overview: "map-stage-5.jpg" },
+    6:  { caption: "ポーからガヴァルニー＝ジェドルへ。ツールマレー峠88回目の登場、頂上フィニッシュ。", overview: "map-stage-6.jpg" },
+    7:  { caption: "アジェトーからボルドーへ。ランド地方の森を抜けての平坦スプリントステージ。", overview: "map-stage-7.jpg" },
+    8:  { caption: "ペリグーからベルジュラックへ。落ち着いた平坦ステージ。", overview: "map-stage-8.jpg" },
+    9:  { file: "Stage 9 2026 TDF.jpg",                              caption: "マルモールからユッセルへ。4つの独立山岳ポイントを含む長距離の丘陵ステージ。", overview: "map-stage-9.jpg" },
     10: { file: "Stage 10 TDF 2026.jpg",                             caption: "フランス革命記念日ステージ。オリヤックからル・リオランの山頂フィニッシュへ。" },
     16: { file: "Stage 16 TDF 2026.jpg",                             caption: "エビアン＝レ＝バンからトノン＝レ＝バンへ。レマン湖畔を走る唯一の個人タイムトライアル。" },
     18: { file: "Stage 18 TDF 2026.jpg",                             caption: "ヴォワロンからオルシエール＝メルレットへ。3連続山岳ステージの初日。" },
@@ -672,24 +679,24 @@
     panel.className = 'visual-panel' + (kind === 'tomorrow' ? ' tomorrow' : '');
     const labelText = kind === 'tomorrow' ? "Tomorrow's Stage Map" : "Today's Stage Map";
     if (info){
-      const url = IMG_BASE + encodeURIComponent(info.file);
-      const stageImg = `
+      const stageImg = info.file ? `
         <div class="vp-col">
-          <img src="${url}" alt="Stage ${stageNum} route map" loading="lazy"
+          <img src="${IMG_BASE + encodeURIComponent(info.file)}" alt="Stage ${stageNum} route map" loading="lazy"
                onerror="this.closest('.vp-col').innerHTML='<div class=&quot;vp-missing&quot;>画像を読み込めませんでした →<br><a href=&quot;${SOURCE_PAGE}&quot; target=&quot;_blank&quot; style=&quot;color:#f4c400&quot;>Freewheeling France</a></div>'">
           <div class="vp-col-label">Stage route</div>
-        </div>`;
+        </div>` : '';
       const overviewImg = info.overview ? `
         <div class="vp-col">
           <img src="${info.overview}" alt="Stage ${stageNum} position on full route map" loading="lazy"
                onerror="this.closest('.vp-col').style.display='none'">
           <div class="vp-col-label">Full route ー today's position</div>
         </div>` : '';
+      const imgCount = (info.file ? 1 : 0) + (info.overview ? 1 : 0);
       panel.innerHTML = `
         <div class="vp-label">${labelText} ・ Stage ${stageNum}</div>
-        <div class="vp-images">${stageImg}${overviewImg}</div>
+        <div class="vp-images${imgCount < 2 ? ' single' : ''}">${stageImg}${overviewImg}</div>
         <div class="vp-caption">${info.caption}</div>
-        <div class="vp-source">Map: Freewheeling France${info.overview ? ' ／ letour.fr' : ''} ／ <a href="${SOURCE_PAGE}" target="_blank">元ページで見る</a></div>
+        <div class="vp-source">Map: ${info.file ? 'Freewheeling France' : ''}${info.file && info.overview ? ' ／ ' : ''}${info.overview ? 'letour.fr' : ''}${info.file ? ` ／ <a href="${SOURCE_PAGE}" target="_blank">元ページで見る</a>` : ''}</div>
       `;
     } else {
       panel.innerHTML = `
