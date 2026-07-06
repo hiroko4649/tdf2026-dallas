@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tour de France 2026 - Dallas Watch Schedule</title>
+<style>
+  :root{
+    --asphalt:#161514;
+    --asphalt-light:#211f1d;
+    --chalk:#f2ede2;
+    --chalk-dim:#a89f8f;
+    --jersey-yellow:#f4c400;
+    --jersey-yellow-deep:#c99a00;
+    --polka-red:#d6321f;
+    --sprint-green:#3f8f5f;
+    --line:#3a3733;
+    --flag-blue:#1f3a63;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    background:var(--asphalt);
+    color:var(--chalk);
+    font-family:"Hiragino Sans","Yu Gothic",-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  .sheet{
+    max-width:780px;
+    margin:0 auto;
+    padding:0 0 40px 0;
+    position:relative;
+    overflow:hidden;
+  }
+  /* road texture */
+  .sheet::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+
+  /* ===== HEADER ===== */
+  header{
+    position:relative;
+    padding:38px 30px 26px;
+    background:var(--asphalt-light);
+    border-bottom:3px solid var(--jersey-yellow);
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.28em;
+    color:var(--jersey-yellow);
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  h1{
+    margin:0;
+    font-size:40px;
+    line-height:1.05;
+    font-weight:900;
+    letter-spacing:0.01em;
+    color:var(--chalk);
+    text-transform:uppercase;
+  }
+  h1 span{color:var(--jersey-yellow);}
+  .sub{
+    margin-top:10px;
+    font-size:15px;
+    color:var(--chalk-dim);
+    line-height:1.7;
+  }
+  .platform-tags{
+    margin-top:16px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .tag{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.05em;
+    padding:5px 10px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    color:var(--chalk-dim);
+  }
+  .tag.on{border-color:var(--jersey-yellow);color:var(--jersey-yellow);}
+
+  /* ===== ELEVATION PROFILE STRIP (signature element) ===== */
+  .profile-wrap{
+    padding:22px 30px 6px;
+    background:var(--asphalt-light);
+    border-bottom:1px solid var(--line);
+  }
+  .profile-label{
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--chalk-dim);
+    margin-bottom:6px;
+    text-transform:uppercase;
+  }
+  svg.profile{width:100%;height:96px;display:block;}
+  .stagenum{font-size:8.5px;fill:var(--chalk-dim);font-weight:700;}
+  .legend{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    padding:10px 0 18px;
+    font-size:11px;
+    color:var(--chalk-dim);
+  }
+  .legend i{
+    display:inline-block;width:9px;height:9px;border-radius:50%;
+    margin-right:5px;vertical-align:middle;
+  }
+
+  /* ===== WEEK GROUPS ===== */
+  .week-title{
+    margin:26px 30px 8px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    color:var(--jersey-yellow);
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .week-title::after{
+    content:"";flex:1;height:1px;background:var(--line);
+  }
+
+  .stage-row{
+    display:grid;
+    grid-template-columns:40px 96px 78px 1fr 64px;
+    gap:14px;
+    align-items:center;
+    padding:11px 30px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .stage-row:hover{background:rgba(244,196,0,0.04);}
+  .badge{
+    width:30px;height:30px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;
+    background:var(--asphalt-light);
+    border:2px solid var(--line);
+    color:var(--chalk-dim);
+  }
+  .badge.mountain{border-color:var(--polka-red);color:var(--polka-red);}
+  .badge.flat{border-color:var(--sprint-green);color:var(--sprint-green);}
+  .badge.hilly{border-color:#c9862f;color:#c9862f;}
+  .badge.tt{border-color:var(--jersey-yellow);color:var(--jersey-yellow);}
+
+  .date-col .dow{
+    font-size:10px;color:var(--chalk-dim);letter-spacing:0.06em;
+  }
+  .date-col .d{
+    font-size:16px;font-weight:800;color:var(--chalk);
+  }
+  .date-col.today .d{color:var(--jersey-yellow);}
+  .date-col .today-flag{
+    font-size:9px;color:var(--jersey-yellow);font-weight:700;
+    background:rgba(244,196,0,0.12);
+    padding:1px 5px;border-radius:2px;margin-left:4px;
+  }
+  .date-col .tomorrow-flag{
+    font-size:9px;color:var(--chalk-dim);font-weight:700;
+    background:transparent;
+    border:1px solid var(--line);
+    padding:0px 5px;border-radius:2px;margin-left:4px;
+  }
+
+  .time-col .ct{
+    font-size:17px;font-weight:800;color:var(--jersey-yellow-deep);
+  }
+  .time-col .et{
+    font-size:10.5px;color:var(--chalk-dim);
+  }
+
+  .route-col .name{font-size:14px;font-weight:600;color:var(--chalk);}
+  .route-col .meta{font-size:11px;color:var(--chalk-dim);margin-top:2px;}
+  .route-col .nbc{
+    font-size:9.5px;color:var(--flag-blue);
+    background:#dfe8f5;
+    display:inline-block;padding:1px 5px;border-radius:2px;
+    margin-left:6px;font-weight:800;
+  }
+
+  .dist-col{font-size:12px;color:var(--chalk-dim);text-align:right;}
+
+  /* rest day */
+  .rest-row{
+    margin:6px 30px;
+    padding:10px 14px;
+    border:1px dashed var(--line);
+    border-radius:3px;
+    color:var(--chalk-dim);
+    font-size:12.5px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .rest-row b{color:var(--chalk);}
+
+  /* ===== TODAY'S STAGE VISUAL ===== */
+  .visual-panel{
+    margin:0 30px 16px;
+    padding:14px;
+    background:var(--asphalt-light);
+    border:1px solid var(--jersey-yellow);
+    border-radius:4px;
+    position:relative;
+  }
+  .visual-panel .vp-label{
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    color:var(--jersey-yellow);
+    font-weight:800;
+    text-transform:uppercase;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .visual-panel .vp-label::before{
+    content:"●";
+    color:var(--polka-red);
+    font-size:8px;
+  }
+  .visual-panel img{
+    display:block;
+    width:100%;
+    max-height:420px;
+    object-fit:contain;
+    border-radius:3px;
+    background:#0c0c0b;
+  }
+  .visual-panel .vp-caption{
+    margin-top:8px;
+    font-size:12px;
+    color:var(--chalk-dim);
+    line-height:1.6;
+  }
+  .visual-panel .vp-source{
+    margin-top:6px;
+    font-size:10px;
+    color:#71695c;
+  }
+  .visual-panel .vp-source a{color:#8d8368;}
+  .visual-panel .vp-missing{
+    padding:22px 10px;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--chalk-dim);
+  }
+  .rest-visual{
+    margin:6px 30px 16px;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    color:var(--chalk-dim);
+    font-size:12.5px;
+    text-align:center;
+  }
+  .visual-panel.tomorrow{
+    border-color:var(--line);
+  }
+  .visual-panel.tomorrow .vp-label{
+    color:var(--chalk-dim);
+  }
+  .visual-panel.tomorrow .vp-label::before{
+    color:var(--chalk-dim);
+  }
+
+  footer{
+    margin:30px 30px 0;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-size:11.5px;
+    color:var(--chalk-dim);
+    line-height:1.8;
+  }
+  footer b{color:var(--chalk);}
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 600px){
+    header{padding:26px 16px 20px;}
+    h1{font-size:28px;}
+    .sub{font-size:13.5px;}
+    .eyebrow{font-size:10.5px;}
+
+    .profile-wrap{padding:16px 16px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    svg.profile{width:700px;min-width:700px;flex-shrink:0;}
+
+    .week-title{margin:20px 16px 8px;font-size:11.5px;}
+
+    .stage-row{
+      grid-template-columns:30px 1fr auto;
+      grid-template-areas:
+        "badge date time"
+        "route route route";
+      row-gap:6px;
+      column-gap:10px;
+      padding:12px 16px;
+    }
+    .stage-row .badge{grid-area:badge;width:26px;height:26px;font-size:10.5px;}
+    .stage-row .date-col{grid-area:date;}
+    .stage-row .time-col{grid-area:time;text-align:right;}
+    .stage-row .route-col{grid-area:route;}
+    .stage-row .dist-col{display:none;} /* distance already in the meta line */
+
+    .date-col .d{font-size:14px;}
+    .time-col .ct{font-size:15px;}
+    .route-col .name{font-size:13.5px;}
+    .route-col .meta{font-size:10.5px;}
+
+    .rest-row{margin:6px 16px;padding:9px 12px;font-size:11.5px;}
+    .visual-panel{margin:0 16px 14px;padding:12px;}
+    .rest-visual{margin:6px 16px 14px;padding:12px;}
+    footer{margin:24px 16px 0;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">DALLAS WATCH CALENDAR ・ 2026年7月4日–26日</div>
+    <h1>TOUR DE <span>FRANCE</span> 2026</h1>
+    <div class="sub">
+      第113回ツール・ド・フランス、全21ステージ ー バルセロナ Grand Départ からパリ・シャンゼリゼまで。<br>
+      表示時刻はすべて <b style="color:var(--chalk)">ダラス（中部夏時間 CDT）</b> に換算した現地放送開始時刻です。
+    </div>
+    <div class="platform-tags">
+      <span class="tag on">Peacock 全21ステージ生中継</span>
+      <span class="tag">NBC同時放送：St.1 / 8 / 20 / 21</span>
+      <span class="tag">Amazon Prime Video ライブチャンネル</span>
+    </div>
+  </header>
+
+  <div class="profile-wrap">
+    <div class="profile-label">Route profile ー 21 stages at a glance</div>
+    <svg class="profile" viewBox="0 0 760 96" preserveAspectRatio="none">
+      <line x1="0" y1="76" x2="760" y2="76" stroke="#3a3733" stroke-width="1"/>
+      <!-- markers: x spaced across 21 stages, height encodes mountain(tall)/hilly(mid)/flat(low)/tt(diamond) -->
+      <!-- generated programmatically-styled shapes -->
+      <g id="markers"></g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#d6321f"></i>山岳</span>
+      <span><i style="background:#c9862f"></i>丘陵</span>
+      <span><i style="background:#3f8f5f"></i>平坦</span>
+      <span><i style="background:#f4c400"></i>タイムトライアル</span>
+      <span><i style="background:#5a564f"></i>休息日</span>
+    </div>
+  </div>
+
+  <div class="week-title">Week 1 ・ Spain → Pyrenees → Bordeaux</div>
+
+  <div class="stage-row" data-stage="1" data-date="2026-07-04">
+    <div class="badge tt">TT</div>
+    <div class="date-col"><div class="dow">7/4 土</div><div class="d">Stage 1</div></div>
+    <div class="time-col"><div class="ct">9:00</div><div class="et">ET 10:00 ・ NBC</div></div>
+    <div class="route-col"><div class="name">バルセロナ → バルセロナ<span class="nbc">NBC</span></div><div class="meta">チームタイムトライアル ・ 19.6km ・ 初代マイヨジョーヌ決定</div></div>
+    <div class="dist-col">19.6km</div>
+  </div>
+
+  <div class="stage-row" data-stage="2" data-date="2026-07-05">
+    <div class="badge hilly">丘</div>
+    <div class="date-col"><div class="dow">7/5 日</div><div class="d">Stage 2</div></div>
+    <div class="time-col"><div class="ct">6:00</div><div class="et">ET 7:00</div></div>
+    <div class="route-col"><div class="name">タラゴナ → バルセロナ</div><div class="meta">丘陵 ・ 169km ・ モンジュイックの丘フィニッシュ</div></div>
+    <div class="dist-col">169km</div>
+  </div>
+
+  <div class="stage-row" data-stage="3" data-date="2026-07-06">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/6 月</div><div class="d">Stage 3</div></div>
+    <div class="time-col"><div class="ct">4:30</div><div class="et">ET 5:30</div></div>
+    <div class="route-col"><div class="name">グラノリェールス → レザングル</div><div class="meta">山岳 ・ 196km ・ フランス入り、2020年以降最速の山岳ステージ</div></div>
+    <div class="dist-col">196km</div>
+  </div>
+
+  <div class="stage-row" data-stage="4" data-date="2026-07-07">
+    <div class="badge hilly">丘</div>
+    <div class="date-col"><div class="dow">7/7 火</div><div class="d">Stage 4</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">カルカソンヌ → フォワ</div><div class="meta">丘陵 ・ 182km</div></div>
+    <div class="dist-col">182km</div>
+  </div>
+
+  <div class="stage-row" data-stage="5" data-date="2026-07-08">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/8 水</div><div class="d">Stage 5</div></div>
+    <div class="time-col"><div class="ct">6:00</div><div class="et">ET 7:00</div></div>
+    <div class="route-col"><div class="name">ラヌメザン → ポー</div><div class="meta">平坦 ・ 158km ・ 1979年以来の遅い初スプリント</div></div>
+    <div class="dist-col">158km</div>
+  </div>
+
+  <div class="stage-row" data-stage="6" data-date="2026-07-09">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/9 木</div><div class="d">Stage 6</div></div>
+    <div class="time-col"><div class="ct">5:00</div><div class="et">ET 6:00</div></div>
+    <div class="route-col"><div class="name">ポー → ガヴァルニー＝ジェドル</div><div class="meta">山岳・頂上ゴール ・ 186km ・ ツールマレー峠88回目</div></div>
+    <div class="dist-col">186km</div>
+  </div>
+
+  <div class="stage-row" data-stage="7" data-date="2026-07-10">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/10 金</div><div class="d">Stage 7</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">アジェトー → ボルドー</div><div class="meta">平坦 ・ 175km</div></div>
+    <div class="dist-col">175km</div>
+  </div>
+
+  <div class="week-title">Week 2 ・ Massif Central → Alsace</div>
+
+  <div class="stage-row" data-stage="8" data-date="2026-07-11">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/11 土</div><div class="d">Stage 8</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30 ・ NBC</div></div>
+    <div class="route-col"><div class="name">ペリグー → ベルジュラック<span class="nbc">NBC</span></div><div class="meta">平坦 ・ 180km</div></div>
+    <div class="dist-col">180km</div>
+  </div>
+
+  <div class="stage-row" data-stage="9" data-date="2026-07-12">
+    <div class="badge hilly">丘</div>
+    <div class="date-col"><div class="dow">7/12 日</div><div class="d">Stage 9</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">マルモール → ユッセル</div><div class="meta">丘陵 ・ 185km ・ ツール最長級</div></div>
+    <div class="dist-col">185km</div>
+  </div>
+
+  <div class="rest-row"><span>7/13（月）</span><b>休息日 ①</b></div>
+
+  <div class="stage-row" data-stage="10" data-date="2026-07-14">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/14 火</div><div class="d">Stage 10</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">オリヤック → ル・リオラン</div><div class="meta">山岳・頂上ゴール ・ 167km ・ フランス革命記念日</div></div>
+    <div class="dist-col">167km</div>
+  </div>
+
+  <div class="stage-row" data-stage="11" data-date="2026-07-15">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/15 水</div><div class="d">Stage 11</div></div>
+    <div class="time-col"><div class="ct">6:00</div><div class="et">ET 7:00</div></div>
+    <div class="route-col"><div class="name">ヴィシー → ヌヴェール</div><div class="meta">平坦 ・ 161km</div></div>
+    <div class="dist-col">161km</div>
+  </div>
+
+  <div class="stage-row" data-stage="12" data-date="2026-07-16">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/16 木</div><div class="d">Stage 12</div></div>
+    <div class="time-col"><div class="ct">6:00</div><div class="et">ET 7:00</div></div>
+    <div class="route-col"><div class="name">ヌヴェール・マニクール → シャロン＝シュル＝ソーヌ</div><div class="meta">平坦 ・ 179km ・ F1サーキット発着</div></div>
+    <div class="dist-col">179km</div>
+  </div>
+
+  <div class="stage-row" data-stage="13" data-date="2026-07-17">
+    <div class="badge hilly">丘</div>
+    <div class="date-col"><div class="dow">7/17 金</div><div class="d">Stage 13</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">ドール → ベルフォール</div><div class="meta">丘陵 ・ 206km ・ 大会最長ステージ</div></div>
+    <div class="dist-col">206km</div>
+  </div>
+
+  <div class="stage-row" data-stage="14" data-date="2026-07-18">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/18 土</div><div class="d">Stage 14</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">ミュルーズ → ル・マルクスタン・フェルラン</div><div class="meta">山岳 ・ 155km ・ 短距離だが激坂フィニッシュ</div></div>
+    <div class="dist-col">155km</div>
+  </div>
+
+  <div class="stage-row" data-stage="15" data-date="2026-07-19">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/19 日</div><div class="d">Stage 15</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">シャンパニョール → プラトー・ド・ソレゾン</div><div class="meta">山岳・頂上ゴール ・ 184km ・ 今大会新設の最難関クライム</div></div>
+    <div class="dist-col">184km</div>
+  </div>
+
+  <div class="rest-row"><span>7/20（月）</span><b>休息日 ②</b></div>
+
+  <div class="week-title">Week 3 ・ Alps to Paris</div>
+
+  <div class="stage-row" data-stage="16" data-date="2026-07-21">
+    <div class="badge tt">TT</div>
+    <div class="date-col"><div class="dow">7/21 火</div><div class="d">Stage 16</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">エビアン＝レ＝バン → トノン＝レ＝バン</div><div class="meta">個人タイムトライアル ・ 26km ・ 唯一のITT</div></div>
+    <div class="dist-col">26km</div>
+  </div>
+
+  <div class="stage-row" data-stage="17" data-date="2026-07-22">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/22 水</div><div class="d">Stage 17</div></div>
+    <div class="time-col"><div class="ct">5:30</div><div class="et">ET 6:30</div></div>
+    <div class="route-col"><div class="name">シャンベリー → ヴォワロン</div><div class="meta">平坦（表記上）・ 175km ・ 実際は獲得標高2,200m超</div></div>
+    <div class="dist-col">175km</div>
+  </div>
+
+  <div class="stage-row" data-stage="18" data-date="2026-07-23">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/23 木</div><div class="d">Stage 18</div></div>
+    <div class="time-col"><div class="ct">5:00</div><div class="et">ET 6:00</div></div>
+    <div class="route-col"><div class="name">ヴォワロン → オルシエール＝メルレット</div><div class="meta">山岳・頂上ゴール ・ 185km ・ 3連続山岳ステージの1日目</div></div>
+    <div class="dist-col">185km</div>
+  </div>
+
+  <div class="stage-row" data-stage="19" data-date="2026-07-24">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/24 金</div><div class="d">Stage 19</div></div>
+    <div class="time-col"><div class="ct">6:00</div><div class="et">ET 7:00</div></div>
+    <div class="route-col"><div class="name">ギャップ → アルプ・デュエズ</div><div class="meta">山岳・頂上ゴール ・ 128km ・ 最短ロードステージ</div></div>
+    <div class="dist-col">128km</div>
+  </div>
+
+  <div class="stage-row" data-stage="20" data-date="2026-07-25">
+    <div class="badge mountain">山</div>
+    <div class="date-col"><div class="dow">7/25 土</div><div class="d">Stage 20</div></div>
+    <div class="time-col"><div class="ct">4:30</div><div class="et">ET 5:30 ・ NBC</div></div>
+    <div class="route-col"><div class="name">ル・ブール・ドワザン → アルプ・デュエズ<span class="nbc">NBC</span></div><div class="meta">山岳・頂上ゴール ・ 171km ・ アルプ・デュエズ2日連続フィニッシュ、クイーンステージ</div></div>
+    <div class="dist-col">171km</div>
+  </div>
+
+  <div class="stage-row" data-stage="21" data-date="2026-07-26">
+    <div class="badge flat">平</div>
+    <div class="date-col"><div class="dow">7/26 日</div><div class="d">Stage 21</div></div>
+    <div class="time-col"><div class="ct">8:30</div><div class="et">ET 9:30</div></div>
+    <div class="route-col"><div class="name">トワリー → パリ・シャンゼリゼ</div><div class="meta">平坦・フィナーレ ・ 133km ・ モンマルトルの丘を経て最終スプリント</div></div>
+    <div class="dist-col">133km</div>
+  </div>
+
+  <footer>
+    <div><b>放送：</b>全21ステージ Peacock で生配信。Stage 1・8・20・21 は NBC でも同時放送。</div>
+    <div><b>時刻表記について：</b>CT＝ダラスの中部夏時間（CDT, UTC-5）。ET（アメリカ東部夏時間）から1時間引いた値です。時刻は現地放送・配信の開始予定時刻で、実際のレーススタート時刻とは多少前後します。</div>
+    <div>2026/7/6時点の公表情報をもとに作成。日程・時刻は変更される場合があります。</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  // stage type per stage 1-21: m=mountain, h=hilly, f=flat, t=tt
+  const types = ['t','h','m','h','f','m','f','f','h','m','f','f','h','m','m','t','f','m','m','m','f'];
+  const restAfter = {9:true, 15:true}; // rest day marker after stage 9 and 15
+  const colors = {m:'#d6321f', h:'#c9862f', f:'#3f8f5f', t:'#f4c400'};
+  const heights = {m:58, h:36, f:16, t:44};
+  const svgNS = "http://www.w3.org/2000/svg";
+  const g = document.getElementById('markers');
+
+  const stageDates = {
+    1:'2026-07-04', 2:'2026-07-05', 3:'2026-07-06', 4:'2026-07-07', 5:'2026-07-08',
+    6:'2026-07-09', 7:'2026-07-10', 8:'2026-07-11', 9:'2026-07-12', 10:'2026-07-14',
+    11:'2026-07-15', 12:'2026-07-16', 13:'2026-07-17', 14:'2026-07-18', 15:'2026-07-19',
+    16:'2026-07-21', 17:'2026-07-22', 18:'2026-07-23', 19:'2026-07-24', 20:'2026-07-25',
+    21:'2026-07-26'
+  };
+  const todayStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date());
+  let todayStage = null;
+  for (const [num, d] of Object.entries(stageDates)){
+    if (d === todayStr){ todayStage = parseInt(num, 10); break; }
+  }
+  const totalSlots = 23; // 21 stages + 2 rest gaps
+  let slot = 0;
+  const width = 760, baseline = 76;
+  let stageIdx = 0;
+  for (let s = 1; s <= 21; s++){
+    const x = 20 + (slot * (width-40)/ (totalSlots-1));
+    const t = types[s-1];
+    const h = heights[t];
+    const y = baseline - h;
+    if (t === 't'){
+      const d = 5;
+      const poly = document.createElementNS(svgNS,'polygon');
+      poly.setAttribute('points', `${x},${y-d} ${x+d},${y} ${x},${y+d} ${x-d},${y}`);
+      poly.setAttribute('fill', colors[t]);
+      g.appendChild(poly);
+    } else {
+      const line = document.createElementNS(svgNS,'line');
+      line.setAttribute('x1', x); line.setAttribute('y1', baseline);
+      line.setAttribute('x2', x); line.setAttribute('y2', y);
+      line.setAttribute('stroke', colors[t]);
+      line.setAttribute('stroke-width', 2.5);
+      g.appendChild(line);
+      const dot = document.createElementNS(svgNS,'circle');
+      dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 3.2);
+      dot.setAttribute('fill', colors[t]);
+      g.appendChild(dot);
+    }
+    const label = document.createElementNS(svgNS,'text');
+    label.setAttribute('x', x); label.setAttribute('y', baseline+14);
+    label.setAttribute('text-anchor','middle');
+    label.setAttribute('class','stagenum');
+    label.textContent = s;
+    g.appendChild(label);
+
+    if (s === todayStage){
+      const ring = document.createElementNS(svgNS,'circle');
+      ring.setAttribute('cx', x); ring.setAttribute('cy', baseline+11.5);
+      ring.setAttribute('r', 8);
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#f4c400');
+      ring.setAttribute('stroke-width', 1.6);
+      g.appendChild(ring);
+    }
+
+    slot++;
+    if (restAfter[s]){
+      slot++; // leave a gap for rest day
+      const rx = 20 + ((slot-1) * (width-40)/ (totalSlots-1));
+      const rl = document.createElementNS(svgNS,'line');
+      rl.setAttribute('x1', rx); rl.setAttribute('y1', baseline-3);
+      rl.setAttribute('x2', rx); rl.setAttribute('y2', baseline+3);
+      rl.setAttribute('stroke', '#5a564f');
+      rl.setAttribute('stroke-width', 4);
+      rl.setAttribute('stroke-linecap','round');
+      g.appendChild(rl);
+    }
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const IMG_BASE = "https://www.freewheelingfrance.com/images%20for%20stories/Images%202025/";
+  const SOURCE_PAGE = "https://www.freewheelingfrance.com/tour-de-france/tour-de-france-2026-route-stage-by-stage-guide.html";
+
+  // Route map / profile images per stage, sourced from Freewheeling France's
+  // stage-by-stage guide. Not every stage has a published image yet.
+  const stageImages = {
+    1:  { file: "2026 Tour de France Stage 1 Barcelona.jpg",        caption: "バルセロナ市街をスタートし、Montjuïcの丘を2回登坂するチームTTコース。" },
+    2:  { file: "2026 Tour de France Stage 2.jpg",                  caption: "タラゴナから海沿いを北上し、Montjuïc城への坂を3回登ってフィニッシュ。" },
+    3:  { file: "2026 Stage 3 TDF.jpg",                              caption: "グラノリェールスをスタートし北上、ピレネーを越えてフランス入り。Les Anglesスキーリゾートでフィニッシュ。" },
+    4:  { file: "2026 TDF stage 4.jpg",                              caption: "中世都市カルカソンヌからフォワへ。丘陵基調でブレイク成立が見込まれる一日。" },
+    9:  { file: "Stage 9 2026 TDF.jpg",                              caption: "マルモールからユッセルへ。4つの独立山岳ポイントを含む長距離の丘陵ステージ。" },
+    10: { file: "Stage 10 TDF 2026.jpg",                             caption: "フランス革命記念日ステージ。オリヤックからル・リオランの山頂フィニッシュへ。" },
+    16: { file: "Stage 16 TDF 2026.jpg",                             caption: "エビアン＝レ＝バンからトノン＝レ＝バンへ。レマン湖畔を走る唯一の個人タイムトライアル。" },
+    18: { file: "Stage 18 TDF 2026.jpg",                             caption: "ヴォワロンからオルシエール＝メルレットへ。3連続山岳ステージの初日。" },
+    19: { file: "Stage 19 TDF 2026.jpg",                             caption: "ギャップからアルプ・デュエズへ。最短ロードステージながら21のヘアピンが待つ。" },
+    20: { file: "Stage 20 TDF 2026.jpg",                             caption: "ル・ブール・ドワザンから、Col de Sarenne経由でアルプ・デュエズへ2日連続フィニッシュ。" }
+  };
+
+  const restDays = { "2026-07-13": "休息日 ①（カンタル地方）", "2026-07-20": "休息日 ②（オート＝サヴォワ地方）" };
+
+  function buildVisualPanel(stageNum, kind){
+    // kind: 'today' | 'tomorrow'
+    const info = stageImages[stageNum];
+    const panel = document.createElement('div');
+    panel.className = 'visual-panel' + (kind === 'tomorrow' ? ' tomorrow' : '');
+    const labelText = kind === 'tomorrow' ? "Tomorrow's Stage Map" : "Today's Stage Map";
+    if (info){
+      const url = IMG_BASE + encodeURIComponent(info.file);
+      panel.innerHTML = `
+        <div class="vp-label">${labelText} ・ Stage ${stageNum}</div>
+        <img src="${url}" alt="Stage ${stageNum} route map" loading="lazy"
+             onerror="this.parentNode.innerHTML='<div class=&quot;vp-label&quot;>${labelText} ・ Stage ${stageNum}</div><div class=&quot;vp-missing&quot;>画像を読み込めませんでした。元ページで確認してください →<br><a href=&quot;${SOURCE_PAGE}&quot; target=&quot;_blank&quot; style=&quot;color:#f4c400&quot;>Freewheeling France</a></div>'">
+        <div class="vp-caption">${info.caption}</div>
+        <div class="vp-source">Map: Freewheeling France ／ <a href="${SOURCE_PAGE}" target="_blank">元ページで見る</a></div>
+      `;
+    } else {
+      panel.innerHTML = `
+        <div class="vp-label">${labelText} ・ Stage ${stageNum}</div>
+        <div class="vp-missing">このステージのコースマップはまだ入手できていません。<br>
+        <a href="${SOURCE_PAGE}" target="_blank" style="color:#f4c400">Freewheeling France で最新情報を確認</a></div>
+      `;
+    }
+    return panel;
+  }
+
+  function buildRestPanel(label, kind){
+    const panel = document.createElement('div');
+    panel.className = 'rest-visual' + (kind === 'tomorrow' ? ' tomorrow' : '');
+    const prefix = kind === 'tomorrow' ? '明日' : '今日';
+    panel.textContent = `${label} ー ${prefix}はレースはありません。`;
+    return panel;
+  }
+
+  function chicagoDateOffset(days){
+    const now = new Date();
+    // shift by N days then read the Chicago calendar date for that instant
+    const shifted = new Date(now.getTime() + days * 86400000);
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(shifted);
+  }
+
+  const today = chicagoDateOffset(0);
+  const tomorrow = chicagoDateOffset(1);
+
+  function markAndInsert(dateStr, kind){
+    const flagClass = kind === 'tomorrow' ? 'tomorrow-flag' : 'today-flag';
+    const flagText = kind === 'tomorrow' ? 'TOMORROW' : 'TODAY';
+
+    const row = document.querySelector(`.stage-row[data-date="${dateStr}"]`);
+    if (row){
+      const dateCol = row.querySelector('.date-col');
+      if (kind === 'today') dateCol.classList.add('today');
+      const dow = dateCol.querySelector('.dow');
+      if (dow && !dow.querySelector('.today-flag') && !dow.querySelector('.tomorrow-flag')){
+        const flag = document.createElement('span');
+        flag.className = flagClass;
+        flag.textContent = flagText;
+        dow.appendChild(flag);
+      }
+      const stageNum = parseInt(row.getAttribute('data-stage'), 10);
+      row.insertAdjacentElement('afterend', buildVisualPanel(stageNum, kind));
+      return;
+    }
+    if (restDays[dateStr]){
+      document.querySelectorAll('.rest-row').forEach(rrow => {
+        const dateSpan = rrow.querySelector('span');
+        if (!dateSpan) return;
+        const mm = dateStr.slice(5,7), dd = dateStr.slice(8,10);
+        const shortDate = `${parseInt(mm,10)}/${parseInt(dd,10)}`;
+        if (dateSpan.textContent.indexOf(shortDate) === 0){
+          rrow.insertAdjacentElement('afterend', buildRestPanel(restDays[dateStr], kind));
+        }
+      });
+    }
+  }
+
+  markAndInsert(today, 'today');
+  markAndInsert(tomorrow, 'tomorrow');
+})();
+</script>
+</body>
+</html>
